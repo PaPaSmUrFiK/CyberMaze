@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cybermaze.features.level01.Level01Screen
+import com.cybermaze.features.level_05.Level05Screen
 import com.cybermaze.features.level_10.Level10Screen
 import com.cybermaze.features.levelselect.LevelSelectScreen
 import com.cybermaze.features.menu.MainMenuScreen
@@ -113,10 +114,21 @@ fun NavGraph(
         }
         
         composable(Screen.Level05.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 5,
-                onBack = { navController.popBackStack() }
+            Level05Screen  (
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level06.route) {
+                        popUpTo(Screen.Level05.route) { inclusive = true }
+                    }
+                }
             )
+
+//            PlaceholderLevelScreen(
+//                levelNumber = 5,
+//                onBack = { navController.popBackStack() }
+//            )
         }
         
         composable(Screen.Level06.route) {
