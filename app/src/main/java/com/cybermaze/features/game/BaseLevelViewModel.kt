@@ -127,7 +127,7 @@ abstract class BaseLevelViewModel(
         if (state.phase != GamePhase.PLAYING) return
 
         val withIntent = state.player.withDirection(direction)
-        val afterStep = if (movementSystem.canMove(withIntent.position, direction, state.map)) {
+        val afterStep = if (movementSystem.canPlayerMove(withIntent, direction, state.map)) {
             val moved = movementSystem.movePlayer(withIntent, direction, state.map).resetMoveTimer()
             handlePlayerLanding(state.updatePlayer(moved))
         } else {

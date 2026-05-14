@@ -5,7 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cybermaze.features.level01.Level01Screen
+import com.cybermaze.features.level_02.Level02Screen
+import com.cybermaze.features.level_03.Level03Screen
+import com.cybermaze.features.level_04.Level04Screen
 import com.cybermaze.features.level_05.Level05Screen
+import com.cybermaze.features.level_06.Level06Screen
+import com.cybermaze.features.level_08.Level08Screen
 import com.cybermaze.features.level_10.Level10Screen
 import com.cybermaze.features.levelselect.LevelSelectScreen
 import com.cybermaze.features.menu.MainMenuScreen
@@ -93,23 +98,41 @@ fun NavGraph(
         // STUDENTS: Add your level screens below
         // Level 02-10 placeholders (students will implement these)
         composable(Screen.Level02.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 2,
-                onBack = { navController.popBackStack() }
+            Level02Screen(
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level03.route) {
+                        popUpTo(Screen.Level02.route) { inclusive = true }
+                    }
+                }
             )
         }
         
         composable(Screen.Level03.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 3,
-                onBack = { navController.popBackStack() }
+            Level03Screen (
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level04.route) {
+                        popUpTo(Screen.Level03.route) { inclusive = true }
+                    }
+                }
             )
         }
         
         composable(Screen.Level04.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 4,
-                onBack = { navController.popBackStack() }
+            Level04Screen(
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level05.route) {
+                        popUpTo(Screen.Level04.route) { inclusive = true }
+                    }
+                }
             )
         }
         
@@ -132,9 +155,15 @@ fun NavGraph(
         }
         
         composable(Screen.Level06.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 6,
-                onBack = { navController.popBackStack() }
+            Level06Screen (
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level07.route) {
+                        popUpTo(Screen.Level06.route) { inclusive = true }
+                    }
+                }
             )
         }
         
@@ -146,9 +175,15 @@ fun NavGraph(
         }
         
         composable(Screen.Level08.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 8,
-                onBack = { navController.popBackStack() }
+            Level08Screen(
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level09.route) {
+                        popUpTo(Screen.Level08.route) { inclusive = true }
+                    }
+                }
             )
         }
         

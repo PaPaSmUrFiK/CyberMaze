@@ -1,4 +1,4 @@
-package com.cybermaze.features.level_10
+package com.cybermaze.features.level_08
 
 import androidx.lifecycle.viewModelScope
 import com.cybermaze.core.data.repository.ProgressRepository
@@ -12,23 +12,13 @@ import com.cybermaze.core.game.system.CollisionSystem
 import com.cybermaze.core.game.system.EnemySystem
 import com.cybermaze.core.game.system.GuardSystem
 import com.cybermaze.core.game.system.MovementSystem
-import com.cybermaze.core.game.system.MovingTrapSystem
-import com.cybermaze.core.game.system.PowerUpSystem
-import com.cybermaze.core.game.system.SpeedBoostSystem
-import com.cybermaze.core.game.system.TeleportSystem
 import com.cybermaze.features.game.BaseLevelViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel for Level 10 — "Final Core".
- *
- * All systems except fog: Level 10 uses **no** [FogOfWarSystem] and `baseFogRadiusTiles == null`
- * so the full map (keys, doors, layout) stays visible.
- */
 @HiltViewModel
-class Level10ViewModel @Inject constructor(
+class Level08ViewModel @Inject constructor(
     progressRepository: ProgressRepository,
     movementSystem: MovementSystem,
     collisionSystem: CollisionSystem,
@@ -45,60 +35,44 @@ class Level10ViewModel @Inject constructor(
     init {
         viewModelScope.launch { progressRepository.initializeProgress() }
 
-        require(LevelLoader.validateLayout(LEVEL_10_MAP).isEmpty()) {
-            "Level 10 layout is invalid: ${LevelLoader.validateLayout(LEVEL_10_MAP)}"
+        require(LevelLoader.validateLayout(LEVEL_08_MAP).isEmpty()) {
+            "Level 08 layout invalid: ${LevelLoader.validateLayout(LEVEL_08_MAP)}"
         }
 
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
-
-        val systems = listOf(
-            PowerUpSystem,
-            SpeedBoostSystem,
-            TeleportSystem,
-            MovingTrapSystem(collisionSystem),
-            GuardSystem(collisionSystem)
-        )
-
+        val cfg = LEVEL_08_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_08_MAP, cfg)
         setupLevel(
             LevelDefinition(
                 config = cfg,
                 map = map,
-                enemies = LEVEL_10_ENEMIES.map { it.copy() },
-                traps = LEVEL_10_TRAPS.map { it.copy() },
-                teleports = LEVEL_10_TELEPORTS.map { it.copy() },
-                baseFogRadiusTiles = null,
-                extraSystems = systems,
-                palette = LEVEL_10_PALETTE
+                enemies = LEVEL_08_ENEMIES.map { it.copy() },
+                extraSystems = listOf(GuardSystem(collisionSystem)),
+                palette = LEVEL_08_PALETTE
             )
         )
     }
 
     override fun createInitialState(): GameState? {
         val current = gameState.value ?: return null
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
+        val cfg = LEVEL_08_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_08_MAP, cfg)
         val collectibles = collectibleSystem.createCollectiblesFromMap(map)
-        val resetTraps = LEVEL_10_TRAPS.map { t ->
-            val start = t.path.firstOrNull() ?: t.position
-            t.copy(position = start, pathIndex = 0, moveTimer = 0f)
-        }
         return current.copy(
             player = Player(position = map.playerSpawn),
-            enemies = LEVEL_10_ENEMIES.map { it.copy() },
+            enemies = LEVEL_08_ENEMIES.map { it.copy() },
             map = map,
             config = cfg,
             collectibles = collectibles,
             collectedPoints = 0,
             elapsedTime = 0f,
             livesLost = 0,
-            phase = GamePhase.BRIEFING,
-            traps = resetTraps,
-            teleports = LEVEL_10_TELEPORTS.map { it.copy(cooldownA = 0f, cooldownB = 0f) },
+            traps = emptyList(),
+            teleports = emptyList(),
             powerUpSecondsLeft = 0f,
             fogVisionBoostSecondsLeft = 0f,
             fogBaseRadiusTiles = null,
-            palette = LEVEL_10_PALETTE
+            phase = GamePhase.BRIEFING,
+            palette = LEVEL_08_PALETTE
         )
     }
 }

@@ -1,38 +1,31 @@
 package com.cybermaze.features.level_10
 
 /**
- * Final-boss map for Level 10 — "Final Core".
+ * Final-boss map for Level 10 — "Final Core" (CyberMaze_TZ.md §6.10).
  *
- * 35 columns x 13 rows (landscape, per TZ §6.10). Every row is **exactly** 35
- * characters wide; `LevelLoader.validateLayout` will crash the level otherwise.
+ * **Chokepoint doors** (без правок движка): три `D` режут крупные проходы, три `K`
+ * лежат в зонах, куда можно дойти до соответствующей двери.
+ * - **Row 1:** `D` в верхнем горизонтальном коридоре — ключ `K` слева, справа энергия и выход в верхнюю часть лабиринта.
+ * - **Row 7:** `D` в узком 7‑клеточном зазоре между `#` — отделяет среднюю зону от нижних коридоров.
+ * - **Row 11:** `D` перед массивом энергии и выходом `E`.
  *
- * Layout overview:
- * - Six horizontal corridors (rows 1, 3, 5, 7, 9, 11) separated by wall bands
- *   with vertical gaps every 4 columns. Player can travel freely between them.
- * - Teleport pair `A` (col 7) ↔ `B` (col 31) on row 3 — long-range warp.
- * - Power-up `P` on row 5, Speed boost `S` and Shield `H` on row 7.
- * - Energy-rich layout: 67 collectibles total.
- *
- * Keys / doors from the TZ are intentionally omitted: the current
- * [com.cybermaze.core.game.system.MovementSystem.canMove] blocks `D` tiles
- * unconditionally and there is no engine path to consume a key on approach.
- * Re-introducing them requires a small engine change (out of scope here).
+ * Телепорты `A`/`B` на строке 5. Туман на уровне 10 в коде выключен — полная видимость карты.
  */
 @Suppress("SpellCheckingInspection")
 val LEVEL_10_MAP: Array<String> = arrayOf(
     //   0         1         2         3
     //   012345678901234567890123456789012345
     "###################################", // 0
-    "#Xooo.ooo.ooo.ooo.ooo.ooo.ooo.oooE#", // 1
-    "#.###.###.###.###.###.###.###.###.#", // 2
-    "#.....A.....o.....o.....o.....B...#", // 3
-    "#.###.###.###.###.###.###.###.###.#", // 4
-    "#.....o.....o.P...o.....o.....o...#", // 5
-    "#.###.###.###.###.###.###.###.###.#", // 6
-    "#.o.S.o.o.o.o.o.o.o.o.o.o.o.H.o.o.#", // 7
-    "#.###.###.###.###.###.###.###.###.#", // 8
-    "#.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.o.#", // 9
-    "#.###.###.###.###.###.###.###.###.#", // 10
-    "#.....o.....o.....o.....o.....o...#", // 11
+    "#Xoo.K.oo..oooD...ooo..oo..ooo..oo#", // 1 — D: верхний проход
+    "#.##.#.##.#####.#.#####.##.#.###..#", // 2
+    "#....#....#...#.#.#...#....#.#....#", // 3
+    "#.####.##.#.#.#.#.#.#.#.##.####.#.#", // 4
+    "#.#K...#..#.#.A.#.B.#.#..#....#.#.#", // 5 — ключ + телепорты
+    "#.#.####.##.#.#####.#.##.####.#.#.#", // 6
+    "#....#...#..#...D...#..#...#..#...#", // 7 — D: узкий проход
+    "#.####.###.##.#####.##.###.#.####.#", // 8
+    "#.#K...#...#..#...#..#...#.#....#.#", // 9 — ключ (дверей нет — только коридор)
+    "#.#.###.###.##.#.##.###.####.##.#.#", // 10
+    "#ooo..ooo..oooooooooD..oooooooooE.#", // 11 — D перед энергией и выходом
     "###################################"  // 12
 )

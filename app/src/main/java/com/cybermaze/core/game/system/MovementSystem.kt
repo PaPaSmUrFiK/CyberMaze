@@ -19,8 +19,7 @@ class MovementSystem {
 
     /**
      * Whether the tile in [direction] from [pos] is in-bounds and walkable.
-     * Doors are passable from this check ONLY when the caller already used
-     * a key — to keep things simple this function treats them as blocked.
+     * Used for **enemies** and generic path checks: [TileType.DOOR] is always blocked.
      */
     fun canMove(pos: Position, direction: Direction, map: GameMap): Boolean {
         if (direction == Direction.NONE) return false
@@ -28,10 +27,25 @@ class MovementSystem {
         return map.isInBounds(newPos) && map.isPassable(newPos)
     }
 
+    /**
+     * Whether the **player** may step one tile in [direction].
+     * Unlike [canMove], a [TileType.DOOR] ahead is allowed when [Player.keysCollected] > 0
+     * so the player can land on the door tile and [CollisionSystem.openDoor] can run from
+     * [com.cybermaze.features.game.BaseLevelViewModel.handlePlayerLanding].
+     */
+    fun canPlayerMove(player: Player, direction: Direction, map: GameMap): Boolean {
+        if (direction == Direction.NONE) return false
+        val newPos = player.position.moved(direction)
+        if (!map.isInBounds(newPos)) return false
+        val tile = map.getTile(newPos) ?: return false
+        if (tile.type == TileType.DOOR) return player.keysCollected > 0
+        return tile.type.isPassable()
+    }
+
     /** Move the player one tile if possible; otherwise return the same player. */
     fun movePlayer(player: Player, direction: Direction, map: GameMap): Player {
         if (direction == Direction.NONE) return player
-        if (!canMove(player.position, direction, map)) return player.withDirection(direction)
+        if (!canPlayerMove(player, direction, map)) return player.withDirection(direction)
         return player.movedTo(player.position.moved(direction), direction)
     }
 
@@ -105,7 +119,7 @@ class MovementSystem {
         }
     }
 
-    /** True if the player is standing on a door tile that they may open. */
+    /** True if the player is standing on a door tile that they may open (same-tile edge case). */
     fun isFacingOpenableDoor(player: Player, map: GameMap): Boolean {
         val tile = map.getTile(player.position) ?: return false
         return tile.type == TileType.DOOR && player.keysCollected > 0

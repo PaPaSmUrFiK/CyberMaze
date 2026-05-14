@@ -1,4 +1,4 @@
-package com.cybermaze.features.level_10
+package com.cybermaze.features.level_06
 
 import androidx.lifecycle.viewModelScope
 import com.cybermaze.core.data.repository.ProgressRepository
@@ -10,11 +10,7 @@ import com.cybermaze.core.game.model.Player
 import com.cybermaze.core.game.system.CollectibleSystem
 import com.cybermaze.core.game.system.CollisionSystem
 import com.cybermaze.core.game.system.EnemySystem
-import com.cybermaze.core.game.system.GuardSystem
 import com.cybermaze.core.game.system.MovementSystem
-import com.cybermaze.core.game.system.MovingTrapSystem
-import com.cybermaze.core.game.system.PowerUpSystem
-import com.cybermaze.core.game.system.SpeedBoostSystem
 import com.cybermaze.core.game.system.TeleportSystem
 import com.cybermaze.features.game.BaseLevelViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,13 +18,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * ViewModel for Level 10 — "Final Core".
- *
- * All systems except fog: Level 10 uses **no** [FogOfWarSystem] and `baseFogRadiusTiles == null`
- * so the full map (keys, doors, layout) stays visible.
+ * ViewModel for Level 06 — "Warp Zone".
+ * Focuses on the [TeleportSystem] mechanic.
  */
 @HiltViewModel
-class Level10ViewModel @Inject constructor(
+class Level06ViewModel @Inject constructor(
     progressRepository: ProgressRepository,
     movementSystem: MovementSystem,
     collisionSystem: CollisionSystem,
@@ -45,47 +39,38 @@ class Level10ViewModel @Inject constructor(
     init {
         viewModelScope.launch { progressRepository.initializeProgress() }
 
-        require(LevelLoader.validateLayout(LEVEL_10_MAP).isEmpty()) {
-            "Level 10 layout is invalid: ${LevelLoader.validateLayout(LEVEL_10_MAP)}"
+        require(LevelLoader.validateLayout(LEVEL_06_MAP).isEmpty()) {
+            "Level 06 layout is invalid: ${LevelLoader.validateLayout(LEVEL_06_MAP)}"
         }
 
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
+        val cfg = LEVEL_06_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_06_MAP, cfg)
 
         val systems = listOf(
-            PowerUpSystem,
-            SpeedBoostSystem,
-            TeleportSystem,
-            MovingTrapSystem(collisionSystem),
-            GuardSystem(collisionSystem)
+            TeleportSystem
         )
 
         setupLevel(
             LevelDefinition(
                 config = cfg,
                 map = map,
-                enemies = LEVEL_10_ENEMIES.map { it.copy() },
-                traps = LEVEL_10_TRAPS.map { it.copy() },
-                teleports = LEVEL_10_TELEPORTS.map { it.copy() },
-                baseFogRadiusTiles = null,
+                enemies = LEVEL_06_ENEMIES.map { it.copy() },
+                teleports = LEVEL_06_TELEPORTS.map { it.copy() },
                 extraSystems = systems,
-                palette = LEVEL_10_PALETTE
+                palette = LEVEL_06_PALETTE
             )
         )
     }
 
     override fun createInitialState(): GameState? {
         val current = gameState.value ?: return null
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
+        val cfg = LEVEL_06_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_06_MAP, cfg)
         val collectibles = collectibleSystem.createCollectiblesFromMap(map)
-        val resetTraps = LEVEL_10_TRAPS.map { t ->
-            val start = t.path.firstOrNull() ?: t.position
-            t.copy(position = start, pathIndex = 0, moveTimer = 0f)
-        }
+        
         return current.copy(
             player = Player(position = map.playerSpawn),
-            enemies = LEVEL_10_ENEMIES.map { it.copy() },
+            enemies = LEVEL_06_ENEMIES.map { it.copy() },
             map = map,
             config = cfg,
             collectibles = collectibles,
@@ -93,12 +78,8 @@ class Level10ViewModel @Inject constructor(
             elapsedTime = 0f,
             livesLost = 0,
             phase = GamePhase.BRIEFING,
-            traps = resetTraps,
-            teleports = LEVEL_10_TELEPORTS.map { it.copy(cooldownA = 0f, cooldownB = 0f) },
-            powerUpSecondsLeft = 0f,
-            fogVisionBoostSecondsLeft = 0f,
-            fogBaseRadiusTiles = null,
-            palette = LEVEL_10_PALETTE
+            teleports = LEVEL_06_TELEPORTS.map { it.copy(cooldownA = 0f, cooldownB = 0f) },
+            palette = LEVEL_06_PALETTE
         )
     }
 }

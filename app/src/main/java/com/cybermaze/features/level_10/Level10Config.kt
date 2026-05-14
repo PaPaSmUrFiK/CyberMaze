@@ -10,20 +10,20 @@ const val LEVEL_10_TIME_LIMIT: Int = 180
  * Counted from [LEVEL_10_MAP] — keep in sync if you edit the layout.
  * Level becomes winnable once the player collects at least [LEVEL_10_REQUIRED_POINTS].
  */
-const val LEVEL_10_REQUIRED_POINTS: Int = 50
+const val LEVEL_10_REQUIRED_POINTS: Int = 32
 
 val LEVEL_10_CONFIG: LevelConfig by lazy {
     LevelConfig(
         levelNumber = 10,
         title = "Final Core",
-        description = "All systems active: timer, fog, traps, teleports, guards. Breach the core, Agent.",
+        description = "Timer, traps, teleports, two guards (vision), 3 keys / 3 chokepoint doors, full visibility.",
         timeLimit = LEVEL_10_TIME_LIMIT,
         requiredPoints = LEVEL_10_REQUIRED_POINTS,
         totalPoints = LevelLoader.countTiles(LEVEL_10_MAP, 'o'),
-        hasKeys = false,
+        hasKeys = true,
         hasTeleports = true,
-        hasDarkness = true,
+        hasDarkness = false,
         hasMovingTraps = true,
-        specialMechanic = "Boss level — every mechanic at once + glitch victory animation."
+        specialMechanic = "Boss: 10 enemies (2 guards w/ vision), traps, teleports, 3 chokepoint doors."
     )
 }
