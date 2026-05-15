@@ -69,7 +69,7 @@ class LevelSelectViewModel @Inject constructor(
         4 -> "Locked Grid"
         5 -> "Trap Matrix"
         6 -> "Warp Zone"
-        7 -> "Blackout"
+        7 -> "Unicorn Meadow"
         8 -> "Hunter Pack"
         9 -> "Deep Maze"
         10 -> "Final Core"

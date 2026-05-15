@@ -2,6 +2,8 @@
 
 This document explains how to add or modify levels **2–10** using the reusable engine introduced in `core/game/engine` and `core/game/system`. The authoritative game design reference remains **[CyberMaze_TZ.md](../CyberMaze_TZ.md)**.
 
+**Level 7:** In the TZ, “Blackout” centers on fog-of-war; the shipped **Level 7** (“Unicorn Meadow”, `features/level_07/`) keeps the **same ASCII maze footprint** but **does not** use `FogOfWarSystem` / `FogOfWarLayer` or `baseFogRadiusTiles`. Difficulty is from **guard vision cones** and **moving traps** on the full visible map instead.
+
 ## 1. Quick workflow
 
 1. **Copy** the donor package `app/src/main/java/com/cybermaze/features/level_template/` to e.g. `features/level_05/`.

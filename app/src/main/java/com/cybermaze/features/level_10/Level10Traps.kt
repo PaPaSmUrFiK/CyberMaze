@@ -3,10 +3,20 @@ package com.cybermaze.features.level_10
 import com.cybermaze.core.game.model.MovingTrap
 import com.cybermaze.core.game.model.Position
 
+private fun horizontalPingPong(y: Int, xMin: Int, xMax: Int): List<Position> =
+    (xMin..xMax).map { Position(it, y) } +
+        (xMax - 1 downTo xMin).map { Position(it, y) }
+
 /**
- * Four moving traps; every waypoint is a walkable tile in [LEVEL_10_MAP].
+ * Five moving traps across upper, mid, and lower zones; waypoints are walkable in [LEVEL_10_MAP].
  */
 val LEVEL_10_TRAPS: List<MovingTrap> = listOf(
+    MovingTrap(
+        id = "trap_upper",
+        position = Position(20, 1),
+        path = horizontalPingPong(y = 1, xMin = 20, xMax = 26),
+        moveInterval = 0.88f
+    ),
     MovingTrap(
         id = "trap_row3",
         position = Position(23, 3),
@@ -18,10 +28,10 @@ val LEVEL_10_TRAPS: List<MovingTrap> = listOf(
     ),
     MovingTrap(
         id = "trap_row5",
-        position = Position(24, 5),
+        position = Position(8, 5),
         path = listOf(
-            Position(24, 5),
-            Position(27, 5)
+            Position(8, 5),
+            Position(11, 5)
         ),
         moveInterval = 0.75f
     ),

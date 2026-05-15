@@ -10,7 +10,9 @@ import com.cybermaze.features.level_03.Level03Screen
 import com.cybermaze.features.level_04.Level04Screen
 import com.cybermaze.features.level_05.Level05Screen
 import com.cybermaze.features.level_06.Level06Screen
+import com.cybermaze.features.level_07.Level07Screen
 import com.cybermaze.features.level_08.Level08Screen
+import com.cybermaze.features.level_09.Level09Screen
 import com.cybermaze.features.level_10.Level10Screen
 import com.cybermaze.features.levelselect.LevelSelectScreen
 import com.cybermaze.features.menu.MainMenuScreen
@@ -168,9 +170,15 @@ fun NavGraph(
         }
         
         composable(Screen.Level07.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 7,
-                onBack = { navController.popBackStack() }
+            Level07Screen(
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level08.route) {
+                        popUpTo(Screen.Level07.route) { inclusive = true }
+                    }
+                }
             )
         }
         
@@ -188,9 +196,15 @@ fun NavGraph(
         }
         
         composable(Screen.Level09.route) {
-            PlaceholderLevelScreen(
-                levelNumber = 9,
-                onBack = { navController.popBackStack() }
+            Level09Screen(
+                onExit = {
+                    navController.popBackStack(Screen.LevelSelect.route, inclusive = false)
+                },
+                onNextLevel = {
+                    navController.navigate(Screen.Level09.route) {
+                        popUpTo(Screen.Level09.route) { inclusive = true }
+                    }
+                }
             )
         }
         

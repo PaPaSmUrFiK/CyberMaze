@@ -23,7 +23,8 @@ data class Player(
     val position: Position,
     val lives: Int = 3,
     val score: Int = 0,
-    val hasShield: Boolean = false,
+    /** Seconds remaining while a shield pickup absorbs one hit; see [hasShield]. */
+    val shieldSecondsLeft: Float = 0f,
     val speedMultiplier: Float = 0.5f,
     val keysCollected: Int = 0,
     val direction: Direction = Direction.NONE,
@@ -36,6 +37,10 @@ data class Player(
     val previousPosition: Position = position
 ) {
     fun isAlive(): Boolean = lives > 0
+
+    /** True while a timed shield from an [H] pickup is active. */
+    val hasShield: Boolean
+        get() = shieldSecondsLeft > 0f
 
     /** True while the player cannot take damage from enemies. */
     val isInvincible: Boolean
@@ -65,9 +70,10 @@ data class Player(
 
     fun useKey(): Player = copy(keysCollected = (keysCollected - 1).coerceAtLeast(0))
 
-    fun activateShield(): Player = copy(hasShield = true)
+    fun activateShield(durationSeconds: Float = DEFAULT_SHIELD_DURATION): Player =
+        copy(shieldSecondsLeft = durationSeconds)
 
-    fun removeShield(): Player = copy(hasShield = false)
+    fun removeShield(): Player = copy(shieldSecondsLeft = 0f)
 
     fun applySpeedBoost(multiplier: Float, durationSeconds: Float = DEFAULT_SPEED_BOOST_DURATION): Player =
         copy(speedMultiplier = multiplier, speedBoostSecondsLeft = durationSeconds)
@@ -86,6 +92,9 @@ data class Player(
             p = p.copy(speedBoostSecondsLeft = left)
             if (left <= 0f) p = p.resetSpeed()
         }
+        if (p.shieldSecondsLeft > 0f) {
+            p = p.copy(shieldSecondsLeft = (p.shieldSecondsLeft - deltaTime).coerceAtLeast(0f))
+        }
         return p
     }
 
@@ -102,5 +111,8 @@ data class Player(
         const val DEFAULT_INVINCIBILITY: Float = 1.5f
 
         const val DEFAULT_SPEED_BOOST_DURATION: Float = 3f
+
+        /** Timed shield from [com.cybermaze.core.game.model.TileType.SHIELD] pickups. */
+        const val DEFAULT_SHIELD_DURATION: Float = 20f
     }
 }

@@ -35,7 +35,7 @@ class CollectibleSystem {
                 SPEED_BOOST_MULT,
                 Player.DEFAULT_SPEED_BOOST_DURATION
             )
-            CollectibleType.SHIELD -> updated.activateShield()
+            CollectibleType.SHIELD -> updated.activateShield(Player.DEFAULT_SHIELD_DURATION)
         }
 
         val newList = collectibles.map { c ->

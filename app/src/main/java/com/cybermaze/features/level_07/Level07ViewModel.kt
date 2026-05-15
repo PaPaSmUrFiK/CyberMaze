@@ -1,4 +1,4 @@
-package com.cybermaze.features.level_10
+package com.cybermaze.features.level_07
 
 import androidx.lifecycle.viewModelScope
 import com.cybermaze.core.data.repository.ProgressRepository
@@ -22,13 +22,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * ViewModel for Level 10 — "Final Core".
- *
- * All systems except fog: Level 10 uses **no** [FogOfWarSystem] and `baseFogRadiusTiles == null`
- * so the full map (keys, doors, layout) stays visible.
+ * Level 7 — "Unicorn Meadow": **no** fog / [FogOfWarSystem]; difficulty from [GuardSystem] and
+ * [MovingTrapSystem] on the TZ maze.
  */
 @HiltViewModel
-class Level10ViewModel @Inject constructor(
+class Level07ViewModel @Inject constructor(
     progressRepository: ProgressRepository,
     movementSystem: MovementSystem,
     collisionSystem: CollisionSystem,
@@ -45,47 +43,47 @@ class Level10ViewModel @Inject constructor(
     init {
         viewModelScope.launch { progressRepository.initializeProgress() }
 
-        require(LevelLoader.validateLayout(LEVEL_10_MAP).isEmpty()) {
-            "Level 10 layout is invalid: ${LevelLoader.validateLayout(LEVEL_10_MAP)}"
+        require(LevelLoader.validateLayout(LEVEL_07_MAP).isEmpty()) {
+            "Level 07 layout invalid: ${LevelLoader.validateLayout(LEVEL_07_MAP)}"
         }
 
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
+        val cfg = LEVEL_07_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_07_MAP, cfg)
 
         val systems = listOf(
             PowerUpSystem,
             SpeedBoostSystem,
             TeleportSystem,
             MovingTrapSystem(collisionSystem),
-            GuardSystem(collisionSystem, damageRange = 1)
+            GuardSystem(collisionSystem)
         )
 
         setupLevel(
             LevelDefinition(
                 config = cfg,
                 map = map,
-                enemies = LEVEL_10_ENEMIES.map { it.copy() },
-                traps = LEVEL_10_TRAPS.map { it.copy() },
-                teleports = LEVEL_10_TELEPORTS.map { it.copy() },
+                enemies = LEVEL_07_ENEMIES.map { it.copy() },
+                traps = LEVEL_07_TRAPS.map { it.copy() },
+                teleports = LEVEL_07_TELEPORTS.map { it.copy() },
                 baseFogRadiusTiles = null,
                 extraSystems = systems,
-                palette = LEVEL_10_PALETTE
+                palette = LEVEL_07_PALETTE
             )
         )
     }
 
     override fun createInitialState(): GameState? {
         val current = gameState.value ?: return null
-        val cfg = LEVEL_10_CONFIG
-        val map = LevelLoader.loadFromStringArray(LEVEL_10_MAP, cfg)
+        val cfg = LEVEL_07_CONFIG
+        val map = LevelLoader.loadFromStringArray(LEVEL_07_MAP, cfg)
         val collectibles = collectibleSystem.createCollectiblesFromMap(map)
-        val resetTraps = LEVEL_10_TRAPS.map { t ->
-            val start = t.path.firstOrNull() ?: t.position
+        val resetTraps = LEVEL_07_TRAPS.map { t ->
+            val start = t.path.first()
             t.copy(position = start, pathIndex = 0, moveTimer = 0f)
         }
         return current.copy(
             player = Player(position = map.playerSpawn),
-            enemies = LEVEL_10_ENEMIES.map { it.copy() },
+            enemies = LEVEL_07_ENEMIES.map { it.copy() },
             map = map,
             config = cfg,
             collectibles = collectibles,
@@ -94,11 +92,11 @@ class Level10ViewModel @Inject constructor(
             livesLost = 0,
             phase = GamePhase.BRIEFING,
             traps = resetTraps,
-            teleports = LEVEL_10_TELEPORTS.map { it.copy(cooldownA = 0f, cooldownB = 0f) },
+            teleports = LEVEL_07_TELEPORTS.map { it.copy(cooldownA = 0f, cooldownB = 0f) },
             powerUpSecondsLeft = 0f,
             fogVisionBoostSecondsLeft = 0f,
             fogBaseRadiusTiles = null,
-            palette = LEVEL_10_PALETTE
+            palette = LEVEL_07_PALETTE
         )
     }
 }

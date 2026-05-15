@@ -15,14 +15,21 @@ import com.cybermaze.core.game.model.TileType
 
 /**
  * [EnemyType.GUARD] stands still, rotates every 3s, and damages the player if they stand
- * in a straight-line vision cone (3 tiles), with walls blocking line-of-sight.
+ * in a straight-line vision cone, with walls blocking line-of-sight.
+ *
+ * @param damageRange how many tiles ahead can deal damage (default 3). [GuardVisionLayer]
+ * still draws [visionRange] tiles for warning.
  */
 class GuardSystem(
-    private val collisionSystem: CollisionSystem
+    private val collisionSystem: CollisionSystem,
+    private val damageRange: Int = 3
 ) : LevelSystem {
 
-    private val visionRange: Int = 3
     private val rotationPeriod: Float = 3f
+
+    init {
+        require(damageRange in 1..3) { "damageRange must be 1..3" }
+    }
 
     override fun update(state: GameState, deltaTime: Float, emit: GameEventEmitter): GameState {
         val guards = state.enemies.filter { it.type == EnemyType.GUARD && it.isActive }
@@ -63,7 +70,7 @@ class GuardSystem(
         val dir = guard.lookDirection
         if (dir == Direction.NONE) return false
 
-        for (step in 1..visionRange) {
+        for (step in 1..damageRange) {
             val cell = when (dir) {
                 Direction.RIGHT -> Position(g.x + step, g.y)
                 Direction.LEFT -> Position(g.x - step, g.y)
