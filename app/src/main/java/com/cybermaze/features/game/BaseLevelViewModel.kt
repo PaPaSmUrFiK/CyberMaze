@@ -121,19 +121,15 @@ abstract class BaseLevelViewModel(
     // Public API
     // ---------------------------------------------------------------------
 
+    /**
+     * Sets the player's intended direction only. Actual steps run in [onTick] when
+     * [Player.canStep] is true — so swipes cannot bypass [Player.moveTimer] and spam tiles.
+     */
     fun onDirectionInput(direction: Direction) {
         if (direction == Direction.NONE) return
         val state = _gameState.value ?: return
         if (state.phase != GamePhase.PLAYING) return
-
-        val withIntent = state.player.withDirection(direction)
-        val afterStep = if (movementSystem.canPlayerMove(withIntent, direction, state.map)) {
-            val moved = movementSystem.movePlayer(withIntent, direction, state.map).resetMoveTimer()
-            handlePlayerLanding(state.updatePlayer(moved))
-        } else {
-            state.updatePlayer(withIntent)
-        }
-        _gameState.value = afterStep
+        _gameState.value = state.updatePlayer(state.player.withDirection(direction))
     }
 
     fun onPause() {
